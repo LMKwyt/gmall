@@ -9,14 +9,17 @@
         <option value="$PROJECT_DIR$/gmall-parent/pom.xml" />
         <option value="$PROJECT_DIR$/gmall-web-utils/pom.xml" />
         <option value="$PROJECT_DIR$/gmallserviceutils/pom.xml" />
-        <option value="$PROJECT_DIR$/gmall-common-utils/pom.xml" />
         <option value="$PROJECT_DIR$/order-web/pom.xml" />
         <option value="$PROJECT_DIR$/gmall-service-utils/pom.xml" />
         <option value="$PROJECT_DIR$/gmall-order-web/pom.xml" />
+        <option value="$PROJECT_DIR$/gmall-manage-web/pom.xml" />
+        <option value="$PROJECT_DIR$/gmall-manage-service/pom.xml" />
+        <option value="$PROJECT_DIR$/gmall-common-utils/pom.xml" />
       </list>
     </option>
   </component>
   <component name="ProjectRootManager">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
+  <component name="WebServicesPlugin" addRequiredLibraries="true" />
 </project>

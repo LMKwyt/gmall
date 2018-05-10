@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table id="spuListDatagrid" class="easyui-datagrid" style="width:400px;height:250px"
+       data-options="url:'',method:'get',title:'属性列表',fitColumns:true,singleSelect:true,toolbar:'#Spu_tb'
+">
+    一级分类<input id="catalog1ForSpuList" class="easyui-combobox" name="dept"
+               data-options="valueField:'id',textField:'name',method:'get',url:'catalog1ForList',
+onSelect:function(record){
+$('#catalog2ForSpuList').combobox('clear');
+$('#catalog2ForSpuList').combobox({'url':'catalog2ForList?catalog1Id='+record.id});}"/>
+    二级分类<input id="catalog2ForSpuList" class="easyui-combobox" name="dept"
+               data-options="valueField:'id',textField:'name',method:'get',
+onSelect:function(record){
+$('#catalog3ForSpuList').combobox('clear');
+$('#catalog3ForSpuList').combobox({'url':'catalog3ForList?catalog2Id='+record.id});}"/>
+    三级分类<input id="catalog3ForSpuList" class="easyui-combobox" name="dept"
+               data-options="valueField:'id',textField:'name',method:'get',
+onSelect:function(record){
+$('#spuListDatagrid').datagrid({'url':'spuList?catalog3Id='+record.id});}"/>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-search"  onclick="javascript:reloadSpuList()"  >刷新列表</a>
+    <thead>
+    <tr>
+        <th data-options="field:'id'" width="20%">商品id </th>
+        <th data-options="field:'spuName'" width="30%">商品名称</th>
+        <th data-options="field:'description'" width="50%">商品描述 </th>
+
+    </tr>
+    </thead>
+</table>
+<div id="Spu_tb">
+    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="addSpuInfo()">添加</a>
+    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="editSpuInfo()">编辑</a>
+    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="delSpuInfo()">删除</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addSkuInfo()">增加sku</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="showSkuInfoList()"> sku列表</a>
+</div>
+
+
+
+
+</div>
+<div  th:include="spuInfoPage"></div>
+
+</body>
+
+
+</html>

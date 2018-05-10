@@ -23,6 +23,17 @@ public class ManagerServiceImpl implements ManageService {
     BaseCatalog2Mapper baseCatalog2Mapper;
     @Autowired
     BaseCatalog3Mapper baseCatalog3Mapper;
+    @Autowired
+    BaseSpuListMapper baseSpuListMapper;
+
+    public List<SpuInfo> getSpuList(String catalog3Id){
+        SpuInfo spuInfo =new SpuInfo();
+        spuInfo.setCatalog3Id(catalog3Id);
+
+        List<SpuInfo> spuInfoList = baseSpuListMapper.select(spuInfo);
+        return spuInfoList;
+    }
+
 
     public List<BaseCatalog1> getAllBaseCatalog1List() {
         List<BaseCatalog1> baseCatalog1List = baseCatalog1Mapper.selectAll();
@@ -54,16 +65,17 @@ public class ManagerServiceImpl implements ManageService {
 
      public void saveAttrInfo(BaseAttrInfo baseAttrInfo){
         //判断baseAttrInfo的主键ID是否有
-
-
          if(baseAttrInfo.getId()!=null&&baseAttrInfo.getId().length()>0){
              //有执行修改
              baseAttrInfoMapper.updateByPrimaryKey(baseAttrInfo);
          }else {
+             //防止主键被赋上一个空字符串
+             if(baseAttrInfo.getId().length()==0){
+                 baseAttrInfo.setId(null);
+             }
              //没有的执行添加
              baseAttrInfoMapper.insertSelective(baseAttrInfo);
          }
-
          //把原属性值全部清空
          BaseAttrValue baseAttrValue4Del = new BaseAttrValue();
          baseAttrValue4Del.setAttrId(baseAttrInfo.getId());

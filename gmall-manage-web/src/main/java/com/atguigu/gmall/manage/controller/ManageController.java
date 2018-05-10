@@ -19,10 +19,15 @@ public class ManageController {
 
     @Reference
     ManageService manageService;
-
+//跳转到平台属性的界面
     @RequestMapping("attrListPage")
     public String getAttrListPage(){
         return "attrListPage";
+    }
+    //跳转到Spu的界面
+    @RequestMapping("spuListPage")
+    public String getSpuListPage(){
+        return "spuListPage";
     }
 
 

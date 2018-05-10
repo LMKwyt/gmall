@@ -21,6 +21,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="demo" target="1.8" />
+      <module name="fastdfs-client-java" target="1.6" />
       <module name="gmall-bean" target="1.8" />
       <module name="gmall-common-utils" target="1.8" />
       <module name="gmall-interface" target="1.8" />

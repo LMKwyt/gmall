@@ -16,9 +16,9 @@ public class AttrInfoController {
     ManageService manageService;
 
     @RequestMapping("attrList")
-    public String getattrList(@RequestParam("catalog3Id") String catalog3Id ){
+    public List<BaseAttrInfo> getattrList(@RequestParam("catalog3Id") String catalog3Id ){
         List<BaseAttrInfo> attrList = manageService.getAttrList(catalog3Id);
-        return JSON.toJSONString(attrList);
+        return attrList;
     }
      @RequestMapping(value="saveAttrInfo",method = RequestMethod.POST)
      public void saveAttrInfo(BaseAttrInfo baseAttrInfo){
@@ -35,5 +35,12 @@ public class AttrInfoController {
     public void  delAttrInfo(BaseAttrInfo baseAttrInfo){
       manageService.delAttrInfo(baseAttrInfo);
     }
+
+    @RequestMapping("attrInfoList")
+    public List<BaseAttrInfo> getattrInfoList(@RequestParam("catalog3Id") String catalog3Id ){
+        List<BaseAttrInfo> attrInfoList = manageService.getattrInfoList(catalog3Id);
+        return attrInfoList;
+    }
+
 
 }

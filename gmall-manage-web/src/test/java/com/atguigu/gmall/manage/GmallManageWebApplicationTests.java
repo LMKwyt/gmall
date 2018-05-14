@@ -11,6 +11,9 @@ public class GmallManageWebApplicationTests {
 
 	@Test
 	public void contextLoads() {
+
+		}
+
 	}
 
-}
+

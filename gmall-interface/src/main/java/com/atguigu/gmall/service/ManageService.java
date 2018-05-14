@@ -5,7 +5,7 @@ import com.atguigu.gmall.bean.*;
 import java.util.List;
 
 public interface ManageService {
-//查询一级分类的集合
+    //查询一级分类的集合
     public List<BaseCatalog1> getAllBaseCatalog1List();
     //查询二级分类的集合
     public List<BaseCatalog2> getAllBaseCatalog2List(String catalog1Id);
@@ -21,4 +21,26 @@ public interface ManageService {
     public void delAttrInfo(BaseAttrInfo baseAttrInfo);
     //获取SPU的集合 一类的商品信息
     public List<SpuInfo> getSpuList(String catalog3Id);
+    //获取有数据库管理员设置的SPU的销售属性列表
+    public List<BaseSaleAttr> getBaseSaleAttrList();
+    //保存spu实例
+    public void saveSpuInfo(SpuInfo spuInfo);
+   //根据spuId 获取SPu实例对象
+    public SpuInfo getSpuinfo(String spuId);
+
+    //根据spuId 获取SpuImageList
+    public List<SpuImage> getspuImageList( String spuId);
+
+//根据销售属性ID 来查找商品属性值的集合
+    public List<SpuSaleAttrValue> getspuSaleAttrValue(String SaleAttrId ,String spuId);
+//根据SPUID来查找商品属性的集合 涵商品属性值得集合用到了xml文件
+    public List<SpuSaleAttr> getspuSaleAttrList(String spuId);
+
+
+////查询平台属性的集合 根据三级分类的ID  包涵平台属性值得集合用到了xml文件
+    public List<BaseAttrInfo> getattrInfoList(String catalog3Id);
+    //保存商品单元储存单位SKU
+    public void saveSkuInfo(SkuInfo skuInfo);
+    //根据SPUid来查到素有的SKU集合
+    public List<SkuInfo> getSkuInfoListBySpu(String spuId);
 }

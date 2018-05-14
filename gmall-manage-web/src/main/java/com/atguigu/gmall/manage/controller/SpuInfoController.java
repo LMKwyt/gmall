@@ -2,7 +2,10 @@ package com.atguigu.gmall.manage.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.fastjson.JSON;
+import com.atguigu.gmall.bean.SpuImage;
 import com.atguigu.gmall.bean.SpuInfo;
+import com.atguigu.gmall.bean.SpuSaleAttr;
+import com.atguigu.gmall.bean.SpuSaleAttrValue;
 import com.atguigu.gmall.service.ManageService;
 import org.apache.commons.lang3.StringUtils;
 import org.csource.common.MyException;
@@ -10,15 +13,16 @@ import org.csource.fastdfs.ClientGlobal;
 import org.csource.fastdfs.StorageClient;
 import org.csource.fastdfs.TrackerClient;
 import org.csource.fastdfs.TrackerServer;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class SpuInfoController {
@@ -27,6 +31,14 @@ public class SpuInfoController {
 
     @Reference
     ManageService manageService;
+
+
+
+    @RequestMapping("saveSpuInfo")
+    public String saveSpuInfo(SpuInfo spuInfo){
+        manageService.saveSpuInfo(spuInfo);
+        return "success";
+    }
 
     @RequestMapping("spuList")
     public String getSpuList(@RequestParam("catalog3Id") String catalog3Id) {
@@ -74,6 +86,47 @@ public class SpuInfoController {
         return imgUrl;
     }
 
+
+
+    @RequestMapping("getSpuinfo")
+     public String getSpuinfo(@RequestParam("spuId") String spuId){
+        SpuInfo spuinfo = manageService.getSpuinfo(spuId);
+        String jsonString = JSON.toJSONString(spuinfo);
+        return jsonString;
+    }
+
+    @RequestMapping("getspuImageList")
+    public List<SpuImage> getspuImageList(@RequestParam("spuId") String spuId){
+        List<SpuImage> spuImageList = manageService.getspuImageList(spuId);
+
+        return spuImageList;
+    }
+
+
+    @RequestMapping("getspuSaleAttrList")
+    public List<SpuSaleAttr> getgetspuSaleAttrList(@RequestParam("spuId") String spuId){
+        List<SpuSaleAttr> spuSaleAttrList = manageService.getspuSaleAttrList(spuId);
+
+
+        for (SpuSaleAttr spuSaleAttr : spuSaleAttrList) {
+            List<SpuSaleAttrValue> spuSaleAttrValueList = spuSaleAttr.getSpuSaleAttrValueList();
+            Map map=new HashMap();
+            map.put("total",spuSaleAttrValueList.size());
+            map.put("rows",spuSaleAttrValueList);
+            // String spuSaleAttrValueJson = JSON.toJSONString(map);
+            spuSaleAttr.setSpuSaleAttrValueJson(map);
+        }
+
+        return spuSaleAttrList;
+    }
+
+
+    @RequestMapping("getspuSaleAttrValueList")
+    public String getspuSaleAttrValue(@RequestParam("SaleAttrId") String SaleAttrId,@RequestParam("spuId") String spuId){
+        List<SpuSaleAttrValue> spuSaleAttrValueList = manageService.getspuSaleAttrValue(SaleAttrId,spuId);
+        String jsonString = JSON.toJSONString(spuSaleAttrValueList);
+        return jsonString;
+    }
 }
 
 

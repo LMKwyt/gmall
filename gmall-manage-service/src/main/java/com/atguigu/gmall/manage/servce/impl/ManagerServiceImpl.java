@@ -5,6 +5,7 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.atguigu.gmall.bean.*;
 
 import com.atguigu.gmall.manage.mapper.*;
+
 import com.atguigu.gmall.service.ManageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Example;
@@ -25,9 +26,217 @@ public class ManagerServiceImpl implements ManageService {
     BaseCatalog3Mapper baseCatalog3Mapper;
     @Autowired
     BaseSpuListMapper baseSpuListMapper;
+    @Autowired
+    SpuSaleAtterMapper spuSaleAtterMapper;
+    @Autowired
+    BaseSaleAttrMapper baseSaleAttrMapper;
+    @Autowired
+    SpuSaleAttrValueMapper spuSaleAttrValueMapper;
+    @Autowired
+    SpuImageMapper spuImageMapper;
+    @Autowired
+    SpuInfoMapper spuInfoMapper;
+    @Autowired
+    SkuInfoMapper skuInfoMapper;
+    @Autowired
+    SkuImageMpper skuImageMpper;
+    @Autowired
+    SkuAttrValueMapper skuAttrValueMapper;
+    @Autowired
+    SkuSaleAttrValueMapper skuSaleAttrValueMapper;
+    public List<SkuInfo> getSkuInfoListBySpu(String spuId){
+        List<SkuInfo> skuInfoList = skuInfoMapper.selectSkuInfoListBySpu(Long.parseLong(spuId));
+        return  skuInfoList;
 
-    public List<SpuInfo> getSpuList(String catalog3Id){
-        SpuInfo spuInfo =new SpuInfo();
+    }
+    public void saveSkuInfo(SkuInfo skuInfo){
+        //判断sku的ID是否为空值
+        if(skuInfo.getId()==null||skuInfo.getId().length()==0){
+            skuInfo.setId(null);
+            skuInfoMapper.insertSelective(skuInfo);
+        }else {
+            skuInfoMapper.updateByPrimaryKeySelective(skuInfo);
+        }
+
+
+     //清空sku图片的数据库在向里面添加
+        SkuImage skuImageDel=new SkuImage();
+        skuImageDel.setSpuImgId(skuInfo.getSpuId());
+        skuImageMpper.delete(skuImageDel);
+
+        List<SkuImage> skuImageList = skuInfo.getSkuImageList();
+        for (SkuImage skuImage : skuImageList) {
+            skuImage.setSkuId(skuInfo.getId());
+            if(skuImage.getId()!=null&&skuImage.getId().length()==0) {
+                skuImage.setId(null);
+            }
+            skuImageMpper.insertSelective(skuImage);
+        }
+
+           //清空数据库中sku平台属性值
+        Example skuAttrValueExample=new Example(SkuAttrValue.class);
+        skuAttrValueExample.createCriteria().andEqualTo("skuId",skuInfo.getId());
+        skuAttrValueMapper.deleteByExample(skuAttrValueExample);
+
+        List<SkuAttrValue> skuAttrValueList = skuInfo.getSkuAttrValueList();
+        for (SkuAttrValue skuAttrValue : skuAttrValueList) {
+            skuAttrValue.setSkuId(skuInfo.getId());
+            if(skuAttrValue.getId()!=null&&skuAttrValue.getId().length()==0) {
+                skuAttrValue.setId(null);
+            }
+            skuAttrValueMapper.insertSelective(skuAttrValue);
+        }
+
+
+        Example skuSaleAttrValueExample=new Example(SkuSaleAttrValue.class);
+        skuSaleAttrValueExample.createCriteria().andEqualTo("skuId",skuInfo.getId());
+        skuSaleAttrValueMapper.deleteByExample(skuSaleAttrValueExample);
+
+        List<SkuSaleAttrValue> skuSaleAttrValueList = skuInfo.getSkuSaleAttrValueList();
+        for (SkuSaleAttrValue skuSaleAttrValue : skuSaleAttrValueList) {
+            skuSaleAttrValue.setSkuId(skuInfo.getId());
+            skuSaleAttrValue.setId(null);
+            skuSaleAttrValueMapper.insertSelective(skuSaleAttrValue);
+        }
+
+    }
+
+
+
+    public List<SpuSaleAttrValue> getspuSaleAttrValue(String SaleAttrId,String spuId){
+        SpuSaleAttrValue spuSaleAttrValue =new SpuSaleAttrValue();
+        //根据商品属性的ID 获取所有的商品属性值
+        spuSaleAttrValue.setSaleAttrId(SaleAttrId);
+        spuSaleAttrValue.setSpuId(spuId);
+        List<SpuSaleAttrValue> spuSaleAttrValueList = spuSaleAttrValueMapper.select(spuSaleAttrValue);
+        return spuSaleAttrValueList;
+    }
+
+    public List<BaseAttrInfo> getattrInfoList(String catalog3Id){
+        List<BaseAttrInfo> baseAttrInfoList=baseAttrInfoMapper.selectattrInfoList(Long.parseLong(catalog3Id));
+        return baseAttrInfoList;
+    }
+
+    public List<SpuSaleAttr> getspuSaleAttrList(String spuId){
+        List<SpuSaleAttr> spuSaleAttrList = spuSaleAtterMapper.selectSpuSaleAttrList(Long.parseLong(spuId));
+        return spuSaleAttrList;
+
+    }
+
+
+
+    public List<SpuImage> getspuImageList( String spuId){
+     //查询spu所有的图片集合
+        SpuImage spuImage=new SpuImage();
+        spuImage.setSpuId(spuId);
+        List<SpuImage> spuImageList = spuImageMapper.select(spuImage);
+        return spuImageList;
+    }
+    public SpuInfo getSpuinfo(String spuId){
+
+        //查询一个空的spu实例
+        SpuInfo spuInfo = spuInfoMapper.selectByPrimaryKey(spuId);
+        //查询spu所有的图片集合
+        SpuImage spuImage=new SpuImage();
+        spuImage.setSpuId(spuId);
+        List<SpuImage> spuImageList = spuImageMapper.select(spuImage);
+        spuInfo.setSpuImageList(spuImageList);
+        //查询spu所有的商品属性集合
+        SpuSaleAttr spuSaleAttr=new SpuSaleAttr();
+        spuSaleAttr.setSpuId(spuId);
+        List<SpuSaleAttr> spuSaleAttrList = spuSaleAtterMapper.select(spuSaleAttr);
+        for (SpuSaleAttr saleAttr : spuSaleAttrList) {
+            //查询spu素有的商品属性值得集合
+            SpuSaleAttrValue spuSaleAttrValue =new SpuSaleAttrValue();
+            //根据商品属性的ID 获取所有的商品属性值
+            spuSaleAttrValue.setSaleAttrId(saleAttr.getSaleAttrId());
+            List<SpuSaleAttrValue> spuSaleAttrValueList = spuSaleAttrValueMapper.select(spuSaleAttrValue);
+            saleAttr.setSpuSaleAttrValueList(spuSaleAttrValueList);
+        }
+        //查询结束将商品实例的集合返回设置
+        spuInfo.setSpuSaleAttrList(spuSaleAttrList);
+        return spuInfo;
+
+    }
+    public void saveSpuInfo(SpuInfo spuInfo) {
+        //保存主表 通过主键存在判断是修改 还是新增
+        if(spuInfo.getId()==null||spuInfo.getId().length()==0){
+            spuInfo.setId(null);
+            spuInfoMapper.insertSelective(spuInfo);
+        }else{
+            spuInfoMapper.updateByPrimaryKey(spuInfo);
+        }
+
+
+        //获取SPu的ID值以便于后面添加
+        String infoId = spuInfo.getId();
+        //获取SPu图片对象的集合
+        List<SpuImage> spuImageList = spuInfo.getSpuImageList();
+        //清空SPU的图片保存路径在向里面重新写入值！
+        SpuImage spuImagedel = new SpuImage();
+        spuImagedel.setSpuId(infoId);
+        spuImageMapper.delete(spuImagedel);
+        //循环靖SPU图片的每个对象保存到数据库中
+        if(spuImageList!=null) {
+            for (SpuImage spuImage : spuImageList) {
+                if (spuImage.getId() != null && spuImage.getId().length() == 0) {
+                    spuImage.setId(null);
+                }
+
+                // 为每一个SPU图片加上SPU的ID值
+                spuImage.setSpuId(infoId);
+                spuImageMapper.insertSelective(spuImage);
+            }
+        }
+        //获取SPU的编辑属性的集合
+        List<SpuSaleAttr> spuSaleAttrList = spuInfo.getSpuSaleAttrList();
+        //清空SPU的属性的数据库的值
+        SpuSaleAttr spuSaleAttrDel = new SpuSaleAttr();
+        //根据SPU的ID值删除所有原有的属性列表
+        spuSaleAttrDel.setSpuId(infoId);
+        spuSaleAtterMapper.delete(spuSaleAttrDel);
+
+        //清空每个平台属性的平台属性值 重新添加
+        SpuSaleAttrValue spuSaleAttrValueDel = new SpuSaleAttrValue();
+        spuSaleAttrValueDel.setSpuId(infoId);
+        spuSaleAttrValueMapper.delete(spuSaleAttrValueDel);
+
+        if(spuSaleAttrList!=null) {
+
+            for (SpuSaleAttr spuSaleAttr : spuSaleAttrList) {
+                if (spuSaleAttr.getId() != null && spuSaleAttr.getId().length() == 0) {
+                    spuSaleAttr.setId(null);
+                }
+
+                spuSaleAttr.setSpuId(infoId);
+                spuSaleAtterMapper.insertSelective(spuSaleAttr);
+                //每个平台属性对象获取平台属性值得集合
+                List<SpuSaleAttrValue> spuSaleAttrValueList = spuSaleAttr.getSpuSaleAttrValueList();
+
+
+                //循环平台属性值集合 得到每个平台属性值对象
+                for (SpuSaleAttrValue spuSaleAttrValue : spuSaleAttrValueList) {
+                    if(spuSaleAttrValue.getId()!=null&&spuSaleAttrValue.getId().length()==0){
+                        spuSaleAttrValue.setId(null);
+                    }
+
+                    //为每个平台属性值设置SPU的ID 便于查询
+                    spuSaleAttrValue.setSpuId(infoId);
+                    //向数据库中传值
+                    spuSaleAttrValueMapper.insertSelective(spuSaleAttrValue);
+                }
+            }
+
+        }
+    }
+
+    public List<BaseSaleAttr> getBaseSaleAttrList() {
+        return baseSaleAttrMapper.selectAll();
+    }
+
+
+    public List<SpuInfo> getSpuList(String catalog3Id) {
+        SpuInfo spuInfo = new SpuInfo();
         spuInfo.setCatalog3Id(catalog3Id);
 
         List<SpuInfo> spuInfoList = baseSpuListMapper.select(spuInfo);
@@ -57,57 +266,57 @@ public class ManagerServiceImpl implements ManageService {
 
     public List<BaseAttrInfo> getAttrList(String catalog3Id) {
 
-        BaseAttrInfo baseAttrInfo=new BaseAttrInfo();
+        BaseAttrInfo baseAttrInfo = new BaseAttrInfo();
         baseAttrInfo.setCatalog3Id(catalog3Id);
         List<BaseAttrInfo> baseAttrInfoList = baseAttrInfoMapper.select(baseAttrInfo);
         return baseAttrInfoList;
     }
 
-     public void saveAttrInfo(BaseAttrInfo baseAttrInfo){
+    public void saveAttrInfo(BaseAttrInfo baseAttrInfo) {
         //判断baseAttrInfo的主键ID是否有
-         if(baseAttrInfo.getId()!=null&&baseAttrInfo.getId().length()>0){
-             //有执行修改
-             baseAttrInfoMapper.updateByPrimaryKey(baseAttrInfo);
-         }else {
-             //防止主键被赋上一个空字符串
-             if(baseAttrInfo.getId().length()==0){
-                 baseAttrInfo.setId(null);
-             }
-             //没有的执行添加
-             baseAttrInfoMapper.insertSelective(baseAttrInfo);
-         }
-         //把原属性值全部清空
-         BaseAttrValue baseAttrValue4Del = new BaseAttrValue();
-         baseAttrValue4Del.setAttrId(baseAttrInfo.getId());
-         baseAttrValueMapper.delete(baseAttrValue4Del);
+        if (baseAttrInfo.getId() != null && baseAttrInfo.getId().length() > 0) {
+            //有执行修改
+            baseAttrInfoMapper.updateByPrimaryKey(baseAttrInfo);
+        } else {
+            //防止主键被赋上一个空字符串
+            if (baseAttrInfo.getId().length() == 0) {
+                baseAttrInfo.setId(null);
+            }
+            //没有的执行添加
+            baseAttrInfoMapper.insertSelective(baseAttrInfo);
+        }
+        //把原属性值全部清空
+        BaseAttrValue baseAttrValue4Del = new BaseAttrValue();
+        baseAttrValue4Del.setAttrId(baseAttrInfo.getId());
+        baseAttrValueMapper.delete(baseAttrValue4Del);
         //才能使主键重复的值写入进去
-         List<BaseAttrValue> baseAttrValueList = baseAttrInfo.getBaseAttrValueList();
-         String id = baseAttrInfo.getId();
-         for (BaseAttrValue baseAttrValue : baseAttrValueList) {
-             //防止主键被赋上一个空字符串
-             if(baseAttrValue.getId()!=null&&baseAttrValue.getId().length()==0){
-                 baseAttrValue.setId(null);
-             }
+        List<BaseAttrValue> baseAttrValueList = baseAttrInfo.getBaseAttrValueList();
+        String id = baseAttrInfo.getId();
+        for (BaseAttrValue baseAttrValue : baseAttrValueList) {
+            //防止主键被赋上一个空字符串
+            if (baseAttrValue.getId() != null && baseAttrValue.getId().length() == 0) {
+                baseAttrValue.setId(null);
+            }
 
-             baseAttrValue.setAttrId(id);
-             baseAttrValueMapper.insertSelective(baseAttrValue);
-         }
-     }
+            baseAttrValue.setAttrId(id);
+            baseAttrValueMapper.insertSelective(baseAttrValue);
+        }
+    }
 
-     public List<BaseAttrValue> getAttrValueList(String attrid){
-         BaseAttrValue baseAttrValueQuery =new BaseAttrValue();
-         baseAttrValueQuery.setAttrId(attrid);
-         List<BaseAttrValue> baseAttrValueList = baseAttrValueMapper.select(baseAttrValueQuery);
-         return baseAttrValueList;
+    public List<BaseAttrValue> getAttrValueList(String attrid) {
+        BaseAttrValue baseAttrValueQuery = new BaseAttrValue();
+        baseAttrValueQuery.setAttrId(attrid);
+        List<BaseAttrValue> baseAttrValueList = baseAttrValueMapper.select(baseAttrValueQuery);
+        return baseAttrValueList;
 
-     }
+    }
 
-     public void delAttrInfo(BaseAttrInfo baseAttrInfo){
-                baseAttrInfoMapper.deleteByPrimaryKey(baseAttrInfo);
-         BaseAttrValue baseAttrValueQuery =new BaseAttrValue();
-         baseAttrValueQuery.setAttrId(baseAttrInfo.getId());
-         Example example=new Example(BaseAttrValue.class);
-         example.createCriteria().andEqualTo("attrId",baseAttrInfo.getId());
-               baseAttrValueMapper.deleteByExample(example);
-     }
+    public void delAttrInfo(BaseAttrInfo baseAttrInfo) {
+        baseAttrInfoMapper.deleteByPrimaryKey(baseAttrInfo);
+        BaseAttrValue baseAttrValueQuery = new BaseAttrValue();
+        baseAttrValueQuery.setAttrId(baseAttrInfo.getId());
+        Example example = new Example(BaseAttrValue.class);
+        example.createCriteria().andEqualTo("attrId", baseAttrInfo.getId());
+        baseAttrValueMapper.deleteByExample(example);
+    }
 }

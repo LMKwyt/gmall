@@ -43,4 +43,12 @@ public interface ManageService {
     public void saveSkuInfo(SkuInfo skuInfo);
     //根据SPUid来查到素有的SKU集合
     public List<SkuInfo> getSkuInfoListBySpu(String spuId);
+
+    //根据SKUid 查询SkuInfo实例
+    public SkuInfo getSkuInfoById(String skuId);
+     //根据SKUid 和SPUid 里面有isCHecked字段
+    public List<SpuSaleAttr> getspuSaleAttrListByskuId(String spuId ,String skuId);
+
+   //根据spuID 来查询sku的实际的销售属性值
+    public List<SkuSaleAttrValue> getSkuSaleAttrValueListBySpu(String spuId);
 }

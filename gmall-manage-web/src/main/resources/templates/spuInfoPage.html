@@ -129,7 +129,7 @@
             $("#SpuInfoDlg").dialog("close");
 
             //刷新界面使保存的数据及时的刷新到下面可以查询到
-            $("#catalog3ForSpuList").datagrid("reload");
+            $("#spuListDatagrid").datagrid("reload");
         })
 
 
@@ -212,9 +212,12 @@
                 {
                     field: 'process', title: '上传进度', width: '40%', formatter:
                     function (value, row, index) {
-                        if (!value) {
-                            value = 0;
-                        }
+                        if (row.imgUrl != undefined && row.imgUrl != '') {
+                                value=100;
+                            } else {
+                                value=0;
+                            }
+
 
                         var htmlstr =
                             "<div class='easyui-progressbar progressbar' style='width:100px;height:20px;' value='" + value + "' text='" + value + "'%>" +
@@ -228,7 +231,6 @@
                 },
                 {field: 'state', title: '上传状态', width: '30%',  //如果存在路径表示上传成功
                     formatter: function (value, row, index) {
-                        console.log('row.imgUrl:' + row.imgUrl);
                         if (row.imgUrl != undefined && row.imgUrl != '') {
                             return '已上传';
                         } else {

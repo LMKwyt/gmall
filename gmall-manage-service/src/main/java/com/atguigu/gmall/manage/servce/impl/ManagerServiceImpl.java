@@ -44,6 +44,25 @@ public class ManagerServiceImpl implements ManageService {
     SkuAttrValueMapper skuAttrValueMapper;
     @Autowired
     SkuSaleAttrValueMapper skuSaleAttrValueMapper;
+
+
+    public List<SkuSaleAttrValue> getSkuSaleAttrValueListBySpu(String spuId){
+        List<SkuSaleAttrValue> skuSaleAttrValueList = skuSaleAttrValueMapper.selectSkuSaleAttrValueListBySpu(Long.parseLong(spuId));
+        return skuSaleAttrValueList;
+    }
+
+
+    public SkuInfo getSkuInfoById(String skuId){
+        SkuInfo skuInfo = skuInfoMapper.selectByPrimaryKey(skuId);
+        SkuImage skuImageQuery= new SkuImage();
+        skuImageQuery.setSkuId(skuInfo.getId());
+        List<SkuImage> skuImageList = skuImageMpper.select(skuImageQuery);
+
+        skuInfo.setSkuImageList(skuImageList);
+        return skuInfo;
+    }
+
+
     public List<SkuInfo> getSkuInfoListBySpu(String spuId){
         List<SkuInfo> skuInfoList = skuInfoMapper.selectSkuInfoListBySpu(Long.parseLong(spuId));
         return  skuInfoList;
@@ -122,7 +141,11 @@ public class ManagerServiceImpl implements ManageService {
         return spuSaleAttrList;
 
     }
+    public List<SpuSaleAttr> getspuSaleAttrListByskuId(String spuId ,String skuId){
+        List<SpuSaleAttr> spuSaleAttrList = spuSaleAtterMapper.selectSpuSaleAttrListBySku(Long.parseLong(spuId),Long.parseLong(skuId));
+        return spuSaleAttrList;
 
+    }
 
 
     public List<SpuImage> getspuImageList( String spuId){

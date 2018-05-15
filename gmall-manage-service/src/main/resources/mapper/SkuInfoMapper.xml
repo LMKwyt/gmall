@@ -40,4 +40,9 @@
             <result property="skuId" column="id" ></result>
         </collection>
     </resultMap>
+
+
+
+
+
 </mapper>

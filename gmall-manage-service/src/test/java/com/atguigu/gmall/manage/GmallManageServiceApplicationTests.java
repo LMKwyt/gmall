@@ -11,6 +11,7 @@ public class GmallManageServiceApplicationTests {
 
 	@Test
 	public void contextLoads() {
+
 	}
 
 }

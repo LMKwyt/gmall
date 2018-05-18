@@ -113,7 +113,6 @@ public class SpuInfoController {
             Map map=new HashMap();
             map.put("total",spuSaleAttrValueList.size());
             map.put("rows",spuSaleAttrValueList);
-            // String spuSaleAttrValueJson = JSON.toJSONString(map);
             spuSaleAttr.setSpuSaleAttrValueJson(map);
         }
 
@@ -127,6 +126,9 @@ public class SpuInfoController {
         String jsonString = JSON.toJSONString(spuSaleAttrValueList);
         return jsonString;
     }
+
+
+
 }
 
 

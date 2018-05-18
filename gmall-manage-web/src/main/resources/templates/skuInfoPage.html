@@ -313,7 +313,7 @@
         skuImgDgendEdit();
         var skuImgDgRows = $("#skuImgDg").datagrid('getChecked');
         for (var i = 0; i < skuImgDgRows.length; i++) {
-            console.log("checkflag:"+skuImgDgRows[i].checkFlag);
+
 
             //要跟bean中字段对齐
             skuInfo["skuImageList[" + i + "].imgName"] = skuImgDgRows[i].imgName;
@@ -337,7 +337,7 @@
         }
 
         var spuSaleAttrSelect = $("#spuSaleAttrGroup").children("select");
-        console.log("len:"+ attrInfoSelect.length);
+
         for (var i = 0; i < spuSaleAttrSelect.length; i++) {
             var saleAttrValueId = spuSaleAttrSelect.eq(i).find("option:selected").val();
             var saleAttrValueName = spuSaleAttrSelect.eq(i).find("option:selected").text();

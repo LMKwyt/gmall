@@ -1,4 +1,4 @@
-package com.atguigu.gmall.listservice;
+package com.atguigu.gmall.list;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

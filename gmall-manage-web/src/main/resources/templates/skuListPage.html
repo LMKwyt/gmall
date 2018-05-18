@@ -28,6 +28,7 @@
 
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editSkuInfo()">编辑</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="onSaleSkuInfo()">上架商品</a>
         </div>
         <input id="spuIdForSkuList" name="spuIdForSkuId" type="hidden"/>
         <input id="catalog3IdForSkuList" name="catalog3IdForSkuId" type="hidden"/>
@@ -66,8 +67,35 @@
         var spuId = $('#spuIdForSkuList').val();
         var catalog3Id=$('#catalog3IdForSkuList').val();
 
-        initSkuInfoDlg();  //在spuInfoPage.html中
+        initSkuInfoDlg();
     }
+function onSaleSkuInfo() {
+    var skuRow = $('#skulist_dg').datagrid('getSelected');
+    var skuId =skuRow.id;
 
+alert(skuId);
+        $.post("onSale",{"skuId":skuId},function (data) {
+
+
+
+            if(data=="success"){
+                $.messager.show({
+                    title:'我的消息',
+                    msg:'商品上架成功。',
+                    timeout:3000,
+                    showType:'slide'
+                });
+
+            }else {
+                $.messager.show({
+                    title:'我的消息',
+                    msg:'商品上架失败，请重新申请。',
+                    timeout:3000,
+                    showType:'slide'
+                });
+            }
+        });
+
+}
 </script>
 </html>

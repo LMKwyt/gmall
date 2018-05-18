@@ -51,4 +51,8 @@ public interface ManageService {
 
    //根据spuID 来查询sku的实际的销售属性值
     public List<SkuSaleAttrValue> getSkuSaleAttrValueListBySpu(String spuId);
+
+
+   //点击商品上架之后将SKU的值添加到ES数据库中以便以后查询
+    public void onSale(String skuId);
 }

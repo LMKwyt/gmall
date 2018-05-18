@@ -29,4 +29,11 @@ public class SkuInfoController {
         return skuInfoList;
     }
 
+    @RequestMapping(value = "onSale",method = RequestMethod.POST)
+    public String onSave(String skuId){
+
+        manageService.onSale(skuId);
+        return "success";
+
+    }
 }

@@ -1,5 +1,6 @@
 package com.atguigu.gmall.manage.servce.impl;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
 
 import com.alibaba.fastjson.JSON;
@@ -8,14 +9,17 @@ import com.atguigu.gmall.bean.*;
 import com.atguigu.gmall.manage.consts.RedisConst;
 import com.atguigu.gmall.manage.mapper.*;
 
+import com.atguigu.gmall.service.ListService;
 import com.atguigu.gmall.service.ManageService;
 import com.atguigu.gmall.utils.RedisUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 import redis.clients.jedis.exceptions.JedisException;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -52,6 +56,34 @@ public class ManagerServiceImpl implements ManageService {
     SkuSaleAttrValueMapper skuSaleAttrValueMapper;
     @Autowired
     RedisUtils redisUtils;
+
+
+    @Reference
+    ListService listService;
+
+
+    public void onSale(String skuId){
+        //查询数据库的实例
+        SkuInfo skuInfo = getSkuInfoById(skuId);
+       //创建ES的数据库对象
+        SkuInfoEs skuInfoEs =new SkuInfoEs();
+      //将数据库中的实例复制到Es的实例中用来保存
+        BeanUtils.copyProperties(skuInfo,skuInfoEs);
+        //获取sku的平台属性值集合
+        List<SkuAttrValue> skuAttrValueList = skuInfo.getSkuAttrValueList();
+        //创建一个集合将sku的ValueId给到ES的实例中去
+        List<SkuAttrValueEs> skuAttrValueListEs = new ArrayList<>(skuAttrValueList.size());
+        for (SkuAttrValue skuAttrValue : skuAttrValueList) {
+           SkuAttrValueEs skuAttrValueEs =new SkuAttrValueEs();
+            skuAttrValueEs.setValueId(skuAttrValue.getValueId());
+            skuAttrValueListEs.add(skuAttrValueEs);
+        }
+        skuInfoEs.setSkuAttrValueListEs(skuAttrValueListEs);
+
+
+        listService.saveSkuInfoEs(skuInfoEs);
+    }
+
 
     public List<SkuSaleAttrValue> getSkuSaleAttrValueListBySpu(String spuId) {
         List<SkuSaleAttrValue> skuSaleAttrValueList = skuSaleAttrValueMapper.selectSkuSaleAttrValueListBySpu(Long.parseLong(spuId));
@@ -141,6 +173,14 @@ public class ManagerServiceImpl implements ManageService {
         List<SkuImage> skuImageList = skuImageMpper.select(skuImageQuery);
 
         skuInfo.setSkuImageList(skuImageList);
+
+
+
+        SkuAttrValue skuAttrValue=new SkuAttrValue();
+        skuAttrValue.setSkuId(skuId);
+        List<SkuAttrValue> skuAttrValueList = skuAttrValueMapper.select(skuAttrValue);
+
+        skuInfo.setSkuAttrValueList(skuAttrValueList);
         return skuInfo;
     }
 

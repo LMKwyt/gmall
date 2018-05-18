@@ -1,4 +1,4 @@
-package com.atguigu.gmall.listservice;
+package com.atguigu.gmall.list;
 
 import io.searchbox.client.JestClient;
 import io.searchbox.core.Search;

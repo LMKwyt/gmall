@@ -1,6 +1,7 @@
 package com.atguigu.gmall.bean;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SkuInfoEsParam implements Serializable {
@@ -12,8 +13,9 @@ public class SkuInfoEsParam implements Serializable {
 
     int pageSize=20;
 
-    List<String> valueIdList;
+    List<String> valueIdList =new ArrayList<>();
 
+    String[] valueIds;
 
     public String getKeyword() {
         return keyword;
@@ -53,5 +55,22 @@ public class SkuInfoEsParam implements Serializable {
 
     public void setValueIdList(List<String> valueIdList) {
         this.valueIdList = valueIdList;
+    }
+
+    public String[] getValueIds() {
+        return valueIds;
+    }
+
+    public void setValueIds(String[] valueIds) {
+        this.valueIds = valueIds;
+    }
+
+    public  List<String>  changArray2list(){
+        for (int i = 0; i < valueIds.length; i++) {
+            valueIdList.add(valueIds[i]);
+
+        }
+
+        return valueIdList;
     }
 }

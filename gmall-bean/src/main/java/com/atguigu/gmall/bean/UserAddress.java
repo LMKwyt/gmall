@@ -17,6 +17,8 @@ public class UserAddress implements Serializable {
     private String consignee;
     @Column
     private String phoneNum;
+    @Column
+    private String isDefault;
 
     public String getId() {
         return id;
@@ -66,6 +68,5 @@ public class UserAddress implements Serializable {
         this.isDefault = isDefault;
     }
 
-    @Column
-    private String isDefault;
+
 }

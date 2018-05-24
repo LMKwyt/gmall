@@ -2,8 +2,8 @@ package com.atguigu.gmall.manage.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.fastjson.JSON;
-import com.atguigu.gmall.bean.BaseCatalog1;
 import com.atguigu.gmall.bean.BaseCatalog2;
+import com.atguigu.gmall.bean.BaseCatalog1;
 import com.atguigu.gmall.bean.BaseCatalog3;
 import com.atguigu.gmall.bean.BaseSaleAttr;
 import com.atguigu.gmall.service.ManageService;

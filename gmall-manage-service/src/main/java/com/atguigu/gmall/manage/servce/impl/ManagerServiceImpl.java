@@ -4,18 +4,18 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
 
 import com.alibaba.fastjson.JSON;
-import com.atguigu.gmall.bean.*;
 
+import com.atguigu.gmall.bean.*;
 import com.atguigu.gmall.manage.consts.RedisConst;
 import com.atguigu.gmall.manage.mapper.*;
-
 import com.atguigu.gmall.service.ListService;
-import com.atguigu.gmall.service.ManageService;
 import com.atguigu.gmall.utils.RedisUtils;
+
+import com.atguigu.gmall.service.ManageService;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.exceptions.JedisConnectionException;
 import redis.clients.jedis.exceptions.JedisException;
 import tk.mybatis.mapper.entity.Example;
 
@@ -465,5 +465,10 @@ public class ManagerServiceImpl implements ManageService {
         Example example = new Example(BaseAttrValue.class);
         example.createCriteria().andEqualTo("attrId", baseAttrInfo.getId());
         baseAttrValueMapper.deleteByExample(example);
+    }
+
+    public List<BaseAttrInfo> selectattrInfoListforValueId( String valueId){
+        List<BaseAttrInfo> baseAttrInfoList = baseAttrInfoMapper.selectattrInfoListforValueId(valueId);
+        return baseAttrInfoList;
     }
 }

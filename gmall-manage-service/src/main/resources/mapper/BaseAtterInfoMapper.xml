@@ -17,4 +17,12 @@
         </collection>
 
     </resultMap>
+    <select id="selectattrInfoListforValueId" resultMap="baseInfoAttrMap">
+        SELECT ba.id,ba.attr_name,ba.catalog3_id,
+        bv.id value_id ,bv.value_name, bv.attr_id FROM
+        base_attr_info ba INNER JOIN  base_attr_value bv  ON ba.id =bv.attr_id
+        where  bv.id in (${ValueId})
+
+
+    </select>
 </mapper>

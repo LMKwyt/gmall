@@ -1,13 +1,16 @@
 package com.atguigu.gmall.usermanage.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSON;
 import com.atguigu.gmall.bean.UserAddress;
 import com.atguigu.gmall.bean.UserInfo;
 import com.atguigu.gmall.service.UserService;
 import com.atguigu.gmall.usermanage.mapper.UserInfoMapper;
 import com.atguigu.gmall.usermanage.mapper.UserAddressMapper;
 
+import com.atguigu.gmall.utils.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import redis.clients.jedis.Jedis;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
@@ -19,6 +22,47 @@ public class UseServiceImpl implements UserService {
     UserInfoMapper userInfoMapper;
     @Autowired
     UserAddressMapper userAddressMapper;
+      @Autowired
+      RedisUtils redisUtils;
+
+      public boolean verify(String userId){
+          Jedis jedis = redisUtils.getJedis();
+          String UserInfoKey ="user:"+userId+":info";
+          Boolean exists = jedis.exists(UserInfoKey);
+          if(exists){
+              jedis.expire(UserInfoKey, 1800);
+              jedis.close();
+          }else{
+              jedis.close();
+          }
+
+          return exists;
+
+      }
+
+    public UserInfo login(UserInfo userInfo){
+
+        UserInfo userInfoByUsernameAndPasswd = userInfoMapper.selectOne(userInfo);
+
+        if(userInfoByUsernameAndPasswd!=null){
+            //存在放入缓存一份设置失效时间
+            Jedis jedis =redisUtils.getJedis();
+
+            String UserInfoKey ="user:"+userInfoByUsernameAndPasswd.getId()+":info";
+
+            String jsonString = JSON.toJSONString(userInfoByUsernameAndPasswd);
+
+
+            jedis.setex(UserInfoKey,3600,jsonString);
+            jedis.close();
+            return userInfoByUsernameAndPasswd;
+        }else{
+            return null;
+        }
+    }
+
+
+
     public void addUserInfo(UserInfo userInfo){
 
         userInfoMapper.insertSelective(userInfo);

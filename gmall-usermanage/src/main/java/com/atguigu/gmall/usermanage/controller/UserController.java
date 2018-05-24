@@ -1,8 +1,6 @@
 package com.atguigu.gmall.usermanage.controller;
 
 
-import com.alibaba.fastjson.JSON;
-import com.atguigu.gmall.bean.UserAddress;
 import com.atguigu.gmall.bean.UserInfo;
 import com.atguigu.gmall.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

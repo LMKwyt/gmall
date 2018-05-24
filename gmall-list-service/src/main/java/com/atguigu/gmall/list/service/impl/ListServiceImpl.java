@@ -5,13 +5,14 @@ import com.atguigu.gmall.bean.SkuInfoEs;
 import com.atguigu.gmall.bean.SkuInfoEsParam;
 import com.atguigu.gmall.bean.SkuInfoEsResult;
 import com.atguigu.gmall.service.ListService;
-import com.fasterxml.jackson.databind.util.ArrayBuilders;
+import com.atguigu.gmall.utils.RedisUtils;
 import io.searchbox.client.JestClient;
 
 
 import io.searchbox.core.Index;
 import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
+import io.searchbox.core.Update;
 import io.searchbox.core.search.aggregation.MetricAggregation;
 import io.searchbox.core.search.aggregation.TermsAggregation;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -27,6 +28,7 @@ import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,6 +38,9 @@ import java.util.List;
 public class ListServiceImpl implements ListService {
     @Autowired
     JestClient jestClient;
+
+    @Autowired
+    RedisUtils redisUtils;
 
 
     public void saveSkuInfoEs(SkuInfoEs skuInfoEs) {
@@ -84,7 +89,7 @@ public class ListServiceImpl implements ListService {
         searchSourceBuilder.from((skuInfoEsParam.getPageNo()-1)*skuInfoEsParam.getPageSize());
         searchSourceBuilder.size(skuInfoEsParam.getPageSize());
         //排序
-        searchSourceBuilder.sort("hotScore", SortOrder.ASC);
+        searchSourceBuilder.sort("hotScore", SortOrder.DESC);
         //聚合
         TermsBuilder termsBuilder = AggregationBuilders.terms("groupby_valueId").field("skuAttrValueListEs.valueId");
         searchSourceBuilder.aggregation(termsBuilder);
@@ -143,5 +148,35 @@ public class ListServiceImpl implements ListService {
         SkuInfoEsResult skuInfoEsResult = makeResultForSearch(searchResult,skuInfoEsParam);
         return  skuInfoEsResult;
 
+    }
+    public void countHotScore(String skuId){
+        Jedis jedis = redisUtils.getJedis();
+        String key="hotScoreSet";
+        //自增长的Zset写法
+        Double curCount = jedis.zincrby(key, 1, skuId);
+        //到10的倍数就进行更新
+        System.out.println(curCount);
+        if(curCount%10==0){
+            updateHotScore(skuId,curCount.longValue());
+        }
+        //关闭
+        jedis.close();
+    }
+
+
+    public void updateHotScore(String id,Long hotScore){
+        String query="{\n" +
+                "  \"doc\": {\n" +
+                "    \"hotScore\":"+hotScore+"\n" +
+                "  }\n" +
+                "}";
+
+
+        Update update = new Update.Builder(query).index("gmall").type("SkuInfo").id(id).build();
+        try {
+            jestClient.execute(update);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

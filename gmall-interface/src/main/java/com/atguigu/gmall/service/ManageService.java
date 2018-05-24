@@ -2,6 +2,7 @@ package com.atguigu.gmall.service;
 
 import com.atguigu.gmall.bean.*;
 
+
 import java.util.List;
 
 public interface ManageService {
@@ -55,4 +56,6 @@ public interface ManageService {
 
    //点击商品上架之后将SKU的值添加到ES数据库中以便以后查询
     public void onSale(String skuId);
+    //从ES中查询到的vlaueid集合 然后查询平台属性实例
+    public List<BaseAttrInfo> selectattrInfoListforValueId( String valueId);
 }

@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSON;
 import com.atguigu.gmall.bean.BaseAttrInfo;
 import com.atguigu.gmall.bean.BaseAttrValue;
 import com.atguigu.gmall.service.ManageService;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

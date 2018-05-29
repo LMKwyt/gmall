@@ -29,13 +29,18 @@ public class GwareController {
     @Autowired
     GwareService gwareService;
 
-    @GetMapping("/index")
+    @RequestMapping("index")
     public String index(){
         return "index";
     }
     @RequestMapping("wareSkuListPage")
     public String wareSkuListPage(){
         return "wareSkuListPage";
+    }
+
+    @GetMapping("taskListPage")
+    public String taskListPage(){
+        return "taskListPage";
     }
 
     //根据sku判断是否有库存

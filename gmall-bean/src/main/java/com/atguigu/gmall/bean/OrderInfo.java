@@ -220,5 +220,24 @@ public class OrderInfo implements Serializable {
     public void setOutTradeNo(String outTradeNo) {
         this.outTradeNo = outTradeNo;
     }
+    //生成摘要
+    public String getOrderSubject(){
+        String body="";
+        if(orderDetailList!=null&&orderDetailList.size()>0){
+            body=  orderDetailList.get(0).getSkuName();
+        }
+        body+="等"+getTotalSkuNum()+"件商品";
+        return body;
+
+    }
+
+    public Integer getTotalSkuNum(){
+        Integer totalNum=0;
+        for (OrderDetail orderDetail : orderDetailList) {
+            totalNum+=  orderDetail.getSkuNum();
+        }
+        return totalNum;
+    }
+
 }
 

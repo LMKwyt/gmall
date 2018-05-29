@@ -97,9 +97,74 @@
             <li class="detailsLi1">操作</li>
             <div style="clear:both;"></div>
           </ul>
-        </div>
+        </div><table class="table" th:each="orderInfo:${orderList}">
+        <tr>
+          <td colspan="7" style="background:#F7F7F7"  class="order-header" >
+            <span style="color:#AAAAAA" th:text="${#dates.format(orderInfo.createTime,'yyyy-mm-dd HH:MM:SS')}"> </span>
+            <span><ruby style="color:#AAAAAA">订单号:</ruby><span th:text="${orderInfo.id}"></span>  </span>
+            <span th:text="${orderInfo.orderStatus.getComment()}">已拆分 </span>
+          </td>
+        </tr>
 
-          <table class="table" th:each="orderInfo:${orderList}">
+        <!--不拆单情况------------------->
+        <!--不拆单情况------------------->
+        <!--不拆单情况------------------->
+        <tr th:if="${orderInfo.orderStatus.toString()!='SPLIT'}" th:each="orderDetail,state:${orderInfo.orderDetailList}">
+          <td colspan="3" class="item">
+            <img th:src="${orderDetail.imgUrl}" alt="" class="img">
+            <div>
+              <p th:text="${orderDetail.skuName}"></p>
+            </div>
+            <div style="margin-left:15px;" th:text="'x'+${orderDetail.skuNum}"></div>
+          </td>
+
+          <td  th:if="${state.index==0}"  th:rowspan="${state.size}" ><span th:text="${orderInfo.consignee}"></span> </td>
+          <td th:if="${state.index==0}"  th:rowspan="${state.size}">
+            <div style="margin-left:15px;"  th:text="'总额 ￥'+${orderInfo.totalAmount}"> </div>
+            <hr style="width:90%;">
+            <p th:text="${orderInfo.paymentWay.getComment()}" >在线支付</p>
+          </td>
+          <td th:if="${state.index==0}"  th:rowspan="${state.size}">
+            <ul>
+              <li style="color:#71B247;" th:text="${orderInfo.orderStatus.getComment()}">等待收货</li>
+              <li style="margin:4px 0;" class="hide"><i class="table_i2"></i>跟踪<i class="table_i3"></i>
+                <div class="hi">
+                  <div class="p-tit">
+                    普通快递   运单号:390085324974
+                  </div>
+                  <div class="hideList">
+                    <ul>
+                      <li>
+                        [北京市] 在北京昌平区南口公司进行签收扫描,快件已被拍照(您
+                        的快件已签收,感谢您使用韵达快递)签收
+                      </li>
+                      <li>
+                        [北京市] 在北京昌平区南口公司进行签收扫描,快件已被拍照(您
+                        的快件已签收,感谢您使用韵达快递)签收
+                      </li>
+                      <li>
+                        [北京昌平区南口公司] 在北京昌平区南口公司进行派件扫描
+                      </li>
+                      <li>
+                        [北京市] 在北京昌平区南口公司进行派件扫描;派送业务员:业务员;联系电话:17319268636
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </li>
+              <li class="tdLi">订单详情</li>
+            </ul>
+          </td>
+          <td th:if="${state.index==0}"  th:rowspan="${state.size}">
+            <button>确认收货</button>
+            <p style="margin:4px 0; ">取消订单</p>
+            <p>催单</p>
+          </td>
+        </tr>
+      </table>
+
+
+        <table class="table" th:each="orderInfo:${orderList}">
             <tr>
               <td colspan="7" style="background:#F7F7F7"  class="order-header" >
                 <span style="color:#AAAAAA" text="2018-04-22 19:33:00"> </span>

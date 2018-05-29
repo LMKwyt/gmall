@@ -17,7 +17,7 @@
 <body>
 
 <table id="orderTaskDatagrid" class="easyui-datagrid" title="库存工作单"
-	   data-options="singleSelect:true,method:'get',url:'wareSkuList' ,toolbar:'#orderTaskTb'">
+	   data-options="singleSelect:true,method:'get',url:'taskList' ,toolbar:'#orderTaskTb'">
 	<thead>
 	<tr>
 		<th data-options="field:'id'" width="5%">工作单号 </th>
@@ -27,7 +27,7 @@
 		<th data-options="field:'consignee'" width="10%">收货人 </th>
 		<th data-options="field:'deliveryAddress'" width="10%">收货地址 </th>
 		<th data-options="field:'trackingNo'" width="10%">运单号 </th>
-		<th data-options="field:'taskStatus'" width="10%">状态 </th>
+		<th data-options="field:'taskStatusComment'" width="10%">状态 </th>
 	</tr>
 	</thead>
 </table>
@@ -35,7 +35,7 @@
 
 	<!-- 用来定义工具栏 -->
 	<div id="orderTaskTb">
-		<button class="easyui-linkbutton" data-options="iconCls:'icon-edit'"
+		<button class="easyui-linkbutton" plain="true" data-options="iconCls:'icon-edit' "
 			onclick="delivery()">发货</button>
 
 	</div>
@@ -46,15 +46,14 @@
 		<!-- 将数据提交到后台 
   	  	form 少了一个action。
   	  -->
-
+		<br>
 		<form id="fm" method="post">
 			<div>
 				<label>运单号:</label> <input class="easyui-validatebox"
 					type="text" id="trackingNo" data-options="required:true" />
 			</div>
-
-			<input>
 		</form>
+		<br>
 	</div>
 	<!-- 保存，关闭 -->
 	</div>

@@ -1,4 +1,4 @@
-package com.atguigu.gmall.service.mapper;
+package com.atguigu.gmall.mapper;
 
 import com.atguigu.gmall.bean.OrderDetail;
 import tk.mybatis.mapper.common.Mapper;

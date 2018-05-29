@@ -83,6 +83,7 @@ public class CartServiceImpl implements CartService {
         Jedis jedis = redisUtils.getJedis();
         String cartKey = "user:" + userId + ":cart";
         List<String> cartJsonList = jedis.hvals(cartKey);
+        jedis.close();
         List<CartInfo> cartInfoList = new ArrayList<>();
         if (cartJsonList != null && cartJsonList.size() > 0) {
             //2 如果能取到 反序列化 返回
@@ -100,7 +101,7 @@ public class CartServiceImpl implements CartService {
                 return o2.getId().compareTo(o1.getId());
             }
         });
-        jedis.close();
+
         return cartInfoList;
 
 
@@ -145,11 +146,14 @@ public class CartServiceImpl implements CartService {
             cartInfoMapper.insertSelective(cartInfo);
 
         }
+     //刷新缓存在查
+        loadCartCache(cartInfo.getUserId());
         //redis 操作
-        String userCartKey = "cart:" + cartInfo.getUserId() + ":info";
+        String userCartKey = "user:" + cartInfo.getUserId() + ":cart";
         Jedis jedis = redisUtils.getJedis();
         //根据用户的ID 和skuId 唯一确定每一个商品列
         String hget = jedis.hget(userCartKey, cartInfo.getSkuId());
+
         if (hget != null && hget.length() > 0) {
             //redis有值
             CartInfo cartInfoRedis = JSON.parseObject(hget, CartInfo.class);
@@ -163,8 +167,8 @@ public class CartServiceImpl implements CartService {
             jedis.hset(userCartKey, cartInfo.getSkuId(), jsonString);
         }
 
-
         jedis.close();
+
         return cartInfo;
 
     }

@@ -26,7 +26,7 @@ import java.util.*;
  * @param
  * @return
  */
-
+@Component
 public class WareConsumer {
 
 
@@ -48,9 +48,6 @@ public class WareConsumer {
 
     @Autowired
     GwareService gwareService;
-
-
-
 
 
 

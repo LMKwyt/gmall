@@ -1,6 +1,7 @@
 package com.atguigu.gmall.web.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.alibaba.fastjson.JSON;
 import com.atguigu.gmall.bean.*;
 import com.atguigu.gmall.config.LoginRequire;
 import com.atguigu.gmall.service.CartService;
@@ -9,12 +10,13 @@ import com.atguigu.gmall.service.OrderService;
 import com.atguigu.gmall.service.UserService;
 import com.atguigu.gmall.utlis.HttpClientUtil;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class OrderController {
@@ -96,12 +98,42 @@ public class OrderController {
         }
 
         orderInfo.sumTotalAmount();
-        orderService.saveOrder(orderInfo);
+        String orderId = orderService.saveOrder(orderInfo);
         //4把购物车选中的信息去掉
         cartService.delCartCheckedList(userId);
         // 删除验证码
         orderService.delTradeNo(userId);
 
-        return "redirect://payment.gmall.com/index";
+        return "redirect://payment.gmall.com/index?orderId="+orderId;
     }
+
+
+
+    @RequestMapping(value = "list",method = RequestMethod.GET)
+    @LoginRequire
+    public String getOrderList(HttpServletRequest request){
+        String userId =(String) request.getAttribute("userId");
+        List<OrderInfo> orderList  = orderService.getOrderListByUser(userId);
+        request.setAttribute("orderList",orderList);
+        return "list";
+    }
+
+
+    @PostMapping("orderSplit")
+    @ResponseBody
+    public String orderSplit(HttpServletRequest request){
+        String orderId = request.getParameter("orderId");
+        String wareSkuMapJson = request.getParameter("wareSkuMap");
+        List<Map> mapList = JSON.parseArray(wareSkuMapJson, Map.class);
+
+        List<Map> subOrderList= orderService.orderSplit(orderId,mapList);
+
+        String subOrderJson = JSON.toJSONString(subOrderList);
+
+        return subOrderJson;
+
+    }
+
+
+
 }
